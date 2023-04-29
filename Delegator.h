@@ -22,7 +22,7 @@ private:
     HelpTool *helpTool;
 public:
     Delegator(TwilioClient *twilioClient, AI *ai, GameBook *gb, HelpTool *helpTool);
-    void handle_request(string phonenum, string msg);
+    string handle_request(string phonenum, string msg);
 };
 
 #endif

@@ -146,11 +146,15 @@ private:
             string body { boost::asio::buffers_begin(request_.body().data()),
                           boost::asio::buffers_end(request_.body().data()) };
             map<string, string> params = parse_form_encoded(body);
-            
-            delegator->handle_request(params["From"], params["Body"]);
 
             response_.set(http::field::content_type, "text/plain");
-            beast::ostream(response_.body()) << "Message sent. Note, a reply from the player/AI may not be immediate.\n";
+            string msg = delegator->handle_request(params["From"], params["Body"]);
+            if(msg != "") {
+                beast::ostream(response_.body()) << msg;
+            } else {
+                beast::ostream(response_.body())
+                        << "Message sent. Note, a reply from the player/AI may not be immediate.\n";
+            }
         }
         else
         {

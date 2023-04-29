@@ -4,13 +4,15 @@
 #include <iostream>
 using namespace std;
 
-void Delegator::handle_request(string phonenum, string msg) {
+string Delegator::handle_request(string phonenum, string msg) {
+    // lowercase msg
+    for(int i = 0; i < msg.size(); i++) {
+        msg[i] = tolower(msg[i]);
+    }
     cout << phonenum << ": " << msg << endl;
     if(msg == "help") {
         string response = helpTool->help();
-        cout << "AI: " << response << endl;
-        twilioClient->send_message(phonenum, response);
-        return;
+        return response;
     }
     Game *g = gb->getGame(phonenum);
     if(g) {
@@ -39,7 +41,7 @@ void Delegator::handle_request(string phonenum, string msg) {
             // haven't asked player_or_judge yet
             asked_player_judge.insert(phonenum);
             string response = "Are you a player or judge?";
-            twilioClient->send_message(phonenum, response);
+            return response;
         } else {
             // already asked player/judge
             if(msg == "judge") {
@@ -47,7 +49,7 @@ void Delegator::handle_request(string phonenum, string msg) {
                     Game *g = new Game(p_num.front(), phonenum);
                     p_num.pop();
                     gb->addGame(g);
-                    twilioClient->send_message(g->getJudgePhonenum(), "Ask a question to player A or B");
+                    return "Ask a question to player A or B";
                 } else {
                     j_num.push(phonenum);
                 }
@@ -56,13 +58,14 @@ void Delegator::handle_request(string phonenum, string msg) {
                     Game *g = new Game(phonenum, j_num.front());
                     j_num.pop();
                     gb->addGame(g);
-                    twilioClient->send_message(g->getJudgePhonenum(), "Ask a question to player A or B");
+                    return "Ask a question to player A or B";
                 } else {
                     p_num.push(phonenum);
                 }
             }
         }
     }
+    return "";
 }
 
 Delegator::Delegator(TwilioClient *twilioClient, AI *ai, GameBook *gb, HelpTool *helpTool) {
