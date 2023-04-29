@@ -10,15 +10,21 @@ using namespace std;
 
 class Game {
 private:
+    int responseCount;
     string judgePhonenum;
     string aiLetter;
     string playerPhonenum;
+    bool gameOver;
 public:
     Game(string judgePhonenum, string playerPhonenum);
     bool isJudge(string phonenum);
     bool isAI(string letter);
     string getPlayerPhonenum();
     string getJudgePhonenum();
+    int getNumResponses();
+    void incrementNumResponses();
+    bool isGameOver();
+    void setGameOver(bool game_over);
 };
 
 
