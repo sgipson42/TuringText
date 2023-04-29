@@ -2,6 +2,8 @@
 #include "Delegator.h"
 #include "Game.h"
 #include <iostream>
+#include <chrono>
+#include <thread>
 using namespace std;
 
 Delegator *delegator = nullptr;
@@ -30,12 +32,17 @@ string Delegator::handle_request(string phonenum, string msg) {
             } else if(msg.find("player b") != string::npos) {
                 if(g->isAI("B")) {
                     string response = ai->askGPT(msg);
+                    // wait random time before responding
+                    this_thread::sleep_for(chrono::seconds(rand() % 30));
                     twilioClient->send_message(phonenum, response);
                 } else {
                     string playernum = g->getPlayerPhonenum();
                     twilioClient->send_message(playernum, msg);
                 }
             }
+        } else {
+            string judgenum = g->getJudgePhonenum();
+            twilioClient->send_message(judgenum, msg);
         }
     } else {
         // no game yet
