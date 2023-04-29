@@ -5,6 +5,7 @@
 #include <iostream>
 #include "TwilioClient.h"
 #include "TwilioServer.h"
+#include "Delegator.h"
 
 int main() {
     // read Twilio credentials from environment variables
@@ -12,6 +13,8 @@ int main() {
     string auth_token = getenv("TWILIO_AUTH_TOKEN");
     string from_number = getenv("TWILIO_FROM_NUMBER");
     TwilioClient client(account_sid, auth_token, from_number);
+
+    Delegator *delegator = new Delegator;
 
     // send a message
     //client.send_message("+16142027904", "Hello, world!");
@@ -24,7 +27,7 @@ int main() {
 
         tcp::acceptor acceptor{ioc, {address, port}};
         tcp::socket socket{ioc};
-        http_server(acceptor, socket);
+        http_server(delegator, acceptor, socket);
 
         ioc.run();
     }

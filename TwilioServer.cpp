@@ -27,6 +27,7 @@
 #include <map>
 #include <vector>
 #include <nlohmann/json.hpp>
+#include "Delegator.h"
 
 using namespace std;
 namespace beast = boost::beast;         // from <boost/beast.hpp>
@@ -61,13 +62,16 @@ public:
 
     // Initiate the asynchronous operations associated with the connection.
     void
-    start()
+    start(Delegator *delegator)
     {
+        this->delegator = delegator;
         read_request();
         check_deadline();
     }
 
 private:
+    Delegator *delegator = nullptr;
+
     // The socket for the currently connected client.
     tcp::socket socket_;
 
@@ -139,13 +143,11 @@ private:
     {
         if(request_.target() == "/api/receiveMessage")
         {
-            cout << request_["Body"] << endl;
-            cout << request_["From"] << endl;
             string body { boost::asio::buffers_begin(request_.body().data()),
                           boost::asio::buffers_end(request_.body().data()) };
-            cout << body << endl;
             map<string, string> params = parse_form_encoded(body);
-            cout << params["From"] << endl;
+            
+            delegator->handle_request(params["From"], params["Body"]);
 
             response_.set(http::field::content_type, "text/plain");
             beast::ostream(response_.body()) << "OK\n";
@@ -196,13 +198,13 @@ private:
 
 // "Loop" forever accepting new connections.
 void
-http_server(tcp::acceptor& acceptor, tcp::socket& socket)
+http_server(Delegator *delegator, tcp::acceptor& acceptor, tcp::socket& socket)
 {
     acceptor.async_accept(socket,
                           [&](beast::error_code ec)
                           {
                               if(!ec)
-                                  std::make_shared<http_connection>(std::move(socket))->start();
-                              http_server(acceptor, socket);
+                                  std::make_shared<http_connection>(std::move(socket))->start(delegator);
+                              http_server(delegator, acceptor, socket);
                           });
 }
