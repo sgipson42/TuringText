@@ -63,9 +63,6 @@ void Delegator::handle_request(string phonenum, string msg) {
             }
         }
     }
-    string response = ai->askGPT(msg);
-    cout << "AI: " << response << endl;
-    twilioClient->send_message(phonenum, response);
 }
 
 Delegator::Delegator(TwilioClient *twilioClient, AI *ai, GameBook *gb, HelpTool *helpTool) {
