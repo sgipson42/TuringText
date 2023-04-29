@@ -26,3 +26,10 @@ string Game::getPlayerPhonenum() {
 string Game::getJudgePhonenum() {
     return judgePhonenum;
 }
+bool Game::isGameOver() {
+    return game_over;
+}
+
+void Game::setGameOver(bool game_over) {
+    this->game_over = game_over;
+}
