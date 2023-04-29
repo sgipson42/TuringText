@@ -11,10 +11,24 @@
 int main() {
     srand(time(NULL));
     // read Twilio credentials from environment variables
-    string account_sid = getenv("TWILIO_ACCOUNT_SID");
-    string auth_token = getenv("TWILIO_AUTH_TOKEN");
-    string from_number = getenv("TWILIO_FROM_NUMBER");
+    // if env var exists
+    string account_sid;
+    if(getenv("TWILIO_ACCOUNT_SID") != NULL) {
+        account_sid = getenv("TWILIO_ACCOUNT_SID");
+    }
+    string auth_token;
+    if(getenv("TWILIO_ACCOUNT_SID") != NULL) {
+        auth_token = getenv("TWILIO_ACCOUNT_SID");
+    }
+    string from_number;
+    if(getenv("TWILIO_ACCOUNT_SID") != NULL) {
+        from_number = getenv("TWILIO_ACCOUNT_SID");
+    }
     TwilioClient *client = new TwilioClient(account_sid, auth_token, from_number);
+    if(getenv("OPENAI_API_KEY") == NULL || getenv("OPENAI_API_KEY") == "") {
+        cout << "Error: OPENAI_API_KEY not set" << endl;
+        return 1;
+    }
     AI *ai = new AI(getenv("OPENAI_API_KEY"));
     GameBook *gb = new GameBook;
     HelpTool *helptool = new HelpTool;
