@@ -150,9 +150,6 @@ private:
             string msg = delegator->handle_request(params["From"], params["Body"]);
             if(msg != "") {
                 beast::ostream(response_.body()) << msg;
-            } else {
-                beast::ostream(response_.body())
-                        << "Message sent.\n";
             }
         }
         else
