@@ -15,9 +15,10 @@ int main() {
     string from_number = getenv("TWILIO_FROM_NUMBER");
     TwilioClient client(account_sid, auth_token, from_number);
     AI ai(getenv("OPENAI_API_KEY"));
-    ai.askGPT("test");
+    GameBook gb;
+    HelpTool helptool;
 
-    Delegator *delegator = new Delegator(&client, &ai);
+    Delegator *delegator = new Delegator(&client, &ai, &gb, &helptool);
 
     // send a message
     //client.send_message("+16142027904", "Hello, world!");

@@ -150,7 +150,7 @@ private:
             delegator->handle_request(params["From"], params["Body"]);
 
             response_.set(http::field::content_type, "text/plain");
-            beast::ostream(response_.body()) << "OK\n";
+            beast::ostream(response_.body()) << "Message sent. Note, a reply from the player/AI may not be immediate.\n";
         }
         else
         {
