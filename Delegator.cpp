@@ -23,6 +23,7 @@ string Delegator::handle_request(string phonenum, string msg) {
     if(g) {
         if(g->isJudge(phonenum)) {
             if(msg_lower.find("player a") != string::npos) {
+                msg = msg.substr(msg_lower.find("player a") + 9);
                 if(g->isAI("A")) {
                     string response = ai->askGPT(msg);
                     twilioClient->send_message(phonenum, response);
@@ -31,6 +32,7 @@ string Delegator::handle_request(string phonenum, string msg) {
                     twilioClient->send_message(playernum, msg);
                 }
             } else if(msg_lower.find("player b") != string::npos) {
+                msg = msg.substr(msg_lower.find("player b") + 9);
                 if(g->isAI("B")) {
                     string response = ai->askGPT(msg);
                     // wait random time before responding
