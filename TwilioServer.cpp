@@ -108,7 +108,7 @@ private:
 
         switch(request_.method())
         {
-            case http::verb::get:
+            case http::verb::post:
                 response_.result(http::status::ok);
                 response_.set(http::field::server, "TuringText");
                 create_response();

@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.0)
 project(TuringText)
 
+set(BUILD_TESTING OFF)
+
 # Include CPM.cmake
 include(CPM.cmake)
 
