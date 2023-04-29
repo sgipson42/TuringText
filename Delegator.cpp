@@ -22,6 +22,13 @@ string Delegator::handle_request(string phonenum, string msg) {
     Game *g = gb->getGame(phonenum);
     if(g) {
         if(g->isJudge(phonenum)) {
+            if (g->isGameOver()) {
+                
+            if(g->getNumResponses() >= 5) {
+                response = "Game over. Which player is the AI?, A or B";
+                g->setGameOver(true);
+                return response;
+            }
             if(msg_lower.find("player a") != string::npos) {
                 msg = msg.substr(msg_lower.find("player a") + 9);
                 if(g->isAI("A")) {
