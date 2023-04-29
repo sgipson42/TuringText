@@ -152,7 +152,7 @@ private:
                 beast::ostream(response_.body()) << msg;
             } else {
                 beast::ostream(response_.body())
-                        << "Message sent. Note, a reply from the player/AI may not be immediate.\n";
+                        << "Message sent.\n";
             }
         }
         else

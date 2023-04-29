@@ -35,6 +35,8 @@ string Delegator::handle_request(string phonenum, string msg) {
                 msg = msg.substr(msg_lower.find("player b") + 9);
                 if(g->isAI("B")) {
                     string response = ai->askGPT(msg);
+                    string letter = g->isAI("A") ? "A" : "B";
+                    response = "Player " + letter + ": " + response;
                     // wait random time before responding
                     this_thread::sleep_for(chrono::seconds(rand() % 30));
                     twilioClient->send_message(phonenum, response);

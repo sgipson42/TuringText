@@ -9,6 +9,7 @@
 #include "AI.h"
 
 int main() {
+    srand(time(NULL));
     // read Twilio credentials from environment variables
     string account_sid = getenv("TWILIO_ACCOUNT_SID");
     string auth_token = getenv("TWILIO_AUTH_TOKEN");
