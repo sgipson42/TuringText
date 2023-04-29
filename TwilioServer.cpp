@@ -16,6 +16,7 @@
 #include <boost/beast/core.hpp>
 #include <boost/beast/http.hpp>
 #include <boost/beast/version.hpp>
+#include <boost/algorithm/string.hpp>
 #include <boost/asio.hpp>
 #include <chrono>
 #include <cstdlib>
@@ -23,6 +24,8 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <map>
+#include <vector>
 #include <nlohmann/json.hpp>
 
 using namespace std;
@@ -31,20 +34,21 @@ namespace http = beast::http;           // from <boost/beast/http.hpp>
 namespace net = boost::asio;            // from <boost/asio.hpp>
 using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
 
-namespace my_program_state
-{
-    std::size_t
-    request_count()
-    {
-        static std::size_t count = 0;
-        return ++count;
-    }
+map<string, string> parse_form_encoded(const string &encoded) {
+  map<string, string> params;
+  vector<string> key_value_pairs;
+  boost::split(key_value_pairs, encoded, boost::is_any_of("&"));
 
-    std::time_t
-    now()
-    {
-        return std::time(0);
+  for (const auto &key_value : key_value_pairs) {
+    vector<string> key_value_vec;
+    boost::split(key_value_vec, key_value, boost::is_any_of("="));
+
+    if (key_value_vec.size() == 2) {
+      params[key_value_vec[0]] = key_value_vec[1];
     }
+  }
+
+  return params;
 }
 
 class http_connection : public std::enable_shared_from_this<http_connection>
@@ -135,19 +139,16 @@ private:
     {
         if(request_.target() == "/api/receiveMessage")
         {
-            // parse json of request body
-            try {
-                string body { boost::asio::buffers_begin(request_.body().data()),
-                              boost::asio::buffers_end(request_.body().data()) };
-                nlohmann::json json_data = nlohmann::json::parse(body);
-                std::cout << json_data.dump(4) << std::endl;
-            } catch (nlohmann::json::parse_error& e) {
-                std::cout << "Error parsing json: " << e.what() << std::endl;
-            }
+            cout << request_["Body"] << endl;
+            cout << request_["From"] << endl;
+            string body { boost::asio::buffers_begin(request_.body().data()),
+                          boost::asio::buffers_end(request_.body().data()) };
+            cout << body << endl;
+            map<string, string> params = parse_form_encoded(body);
+            cout << params["From"] << endl;
 
             response_.set(http::field::content_type, "text/plain");
-            beast::ostream(response_.body())
-                    << "OK\n";
+            beast::ostream(response_.body()) << "OK\n";
         }
         else
         {
