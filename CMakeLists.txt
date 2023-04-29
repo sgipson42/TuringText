@@ -31,7 +31,7 @@ CPMAddPackage(
 file(GLOB SOURCES *.cpp)
 
 # Add the executable target
-add_executable(TuringText ${SOURCES} TwilioClient.cpp TwilioClient.h TwilioServer.cpp TwilioServer.h Delegator.cpp Delegator.h main.cpp)
+add_executable(TuringText ${SOURCES} AI.cpp AI.h TwilioClient.cpp TwilioClient.h TwilioServer.cpp TwilioServer.h Delegator.cpp Delegator.h main.cpp)
 
 # Find all header files in the current directory
 file(GLOB HEADERS *.h)

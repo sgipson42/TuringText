@@ -6,6 +6,7 @@
 #include "TwilioClient.h"
 #include "TwilioServer.h"
 #include "Delegator.h"
+#include "AI.h"
 
 int main() {
     // read Twilio credentials from environment variables
@@ -13,8 +14,10 @@ int main() {
     string auth_token = getenv("TWILIO_AUTH_TOKEN");
     string from_number = getenv("TWILIO_FROM_NUMBER");
     TwilioClient client(account_sid, auth_token, from_number);
+    AI ai(getenv("OPENAI_API_KEY"));
+    ai.askGPT("test");
 
-    Delegator *delegator = new Delegator;
+    Delegator *delegator = new Delegator(&client, &ai);
 
     // send a message
     //client.send_message("+16142027904", "Hello, world!");
