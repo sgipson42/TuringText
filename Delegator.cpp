@@ -10,18 +10,19 @@ Delegator *delegator = nullptr;
 
 string Delegator::handle_request(string phonenum, string msg) {
     // lowercase msg
+    string msg_lower = msg;
     for(int i = 0; i < msg.size(); i++) {
-        msg[i] = tolower(msg[i]);
+        msg_lower[i] = tolower(msg[i]);
     }
     cout << phonenum << ": " << msg << endl;
-    if(msg == "help") {
+    if(msg_lower == "help") {
         string response = helpTool->help();
         return response;
     }
     Game *g = gb->getGame(phonenum);
     if(g) {
         if(g->isJudge(phonenum)) {
-            if(msg.find("player a") != string::npos) {
+            if(msg_lower.find("player a") != string::npos) {
                 if(g->isAI("A")) {
                     string response = ai->askGPT(msg);
                     twilioClient->send_message(phonenum, response);
@@ -29,7 +30,7 @@ string Delegator::handle_request(string phonenum, string msg) {
                     string playernum = g->getPlayerPhonenum();
                     twilioClient->send_message(playernum, msg);
                 }
-            } else if(msg.find("player b") != string::npos) {
+            } else if(msg_lower.find("player b") != string::npos) {
                 if(g->isAI("B")) {
                     string response = ai->askGPT(msg);
                     // wait random time before responding
@@ -42,6 +43,8 @@ string Delegator::handle_request(string phonenum, string msg) {
             }
         } else {
             string judgenum = g->getJudgePhonenum();
+            string letter = g->isAI("A") ? "B" : "A";
+            msg = "Player " + letter + ": " + msg;
             twilioClient->send_message(judgenum, msg);
         }
     } else {
@@ -53,7 +56,7 @@ string Delegator::handle_request(string phonenum, string msg) {
             return response;
         } else {
             // already asked player/judge
-            if(msg == "judge") {
+            if(msg_lower == "judge") {
                 if(p_num.size() > 0) {
                     string p_phonenum = p_num.front();
                     p_num.pop();
@@ -66,7 +69,7 @@ string Delegator::handle_request(string phonenum, string msg) {
                     j_num.push(phonenum);
                     return "Ok, waiting for a player.";
                 }
-            } else if (msg == "player") {
+            } else if (msg_lower == "player") {
                 if(j_num.size() > 0) {
                     string j_phonenum = j_num.front();
                     j_num.pop();
