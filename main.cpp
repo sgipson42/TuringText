@@ -13,12 +13,12 @@ int main() {
     string account_sid = getenv("TWILIO_ACCOUNT_SID");
     string auth_token = getenv("TWILIO_AUTH_TOKEN");
     string from_number = getenv("TWILIO_FROM_NUMBER");
-    TwilioClient client(account_sid, auth_token, from_number);
-    AI ai(getenv("OPENAI_API_KEY"));
-    GameBook gb;
-    HelpTool helptool;
+    TwilioClient *client = new TwilioClient(account_sid, auth_token, from_number);
+    AI *ai = new AI(getenv("OPENAI_API_KEY"));
+    GameBook *gb = new GameBook;
+    HelpTool *helptool = new HelpTool;
 
-    Delegator *delegator = new Delegator(&client, &ai, &gb, &helptool);
+    delegator = new Delegator(client, ai, gb, helptool);
 
     // send a message
     //client.send_message("+16142027904", "Hello, world!");
@@ -31,7 +31,7 @@ int main() {
 
         tcp::acceptor acceptor{ioc, {address, port}};
         tcp::socket socket{ioc};
-        http_server(delegator, acceptor, socket);
+        http_server(acceptor, socket);
 
         ioc.run();
     }

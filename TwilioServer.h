@@ -8,8 +8,7 @@
 #include <boost/asio.hpp>
 using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
 namespace net = boost::asio;            // from <boost/asio.hpp>
-class Delegator;
 
-void http_server(Delegator *delegator, tcp::acceptor& acceptor, tcp::socket& socket);
+void http_server(tcp::acceptor& acceptor, tcp::socket& socket);
 
 #endif //TURINGTEXT_TWILIOSERVER_H

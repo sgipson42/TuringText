@@ -62,16 +62,13 @@ public:
 
     // Initiate the asynchronous operations associated with the connection.
     void
-    start(Delegator *delegator)
+    start()
     {
-        this->delegator = delegator;
         read_request();
         check_deadline();
     }
 
 private:
-    Delegator *delegator = nullptr;
-
     // The socket for the currently connected client.
     tcp::socket socket_;
 
@@ -202,13 +199,13 @@ private:
 
 // "Loop" forever accepting new connections.
 void
-http_server(Delegator *delegator, tcp::acceptor& acceptor, tcp::socket& socket)
+http_server(tcp::acceptor& acceptor, tcp::socket& socket)
 {
     acceptor.async_accept(socket,
                           [&](beast::error_code ec)
                           {
                               if(!ec)
-                                  std::make_shared<http_connection>(std::move(socket))->start(delegator);
-                              http_server(delegator, acceptor, socket);
+                                  std::make_shared<http_connection>(std::move(socket))->start();
+                              http_server(acceptor, socket);
                           });
 }

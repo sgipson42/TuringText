@@ -4,6 +4,8 @@
 #include <iostream>
 using namespace std;
 
+Delegator *delegator = nullptr;
+
 string Delegator::handle_request(string phonenum, string msg) {
     // lowercase msg
     for(int i = 0; i < msg.size(); i++) {
@@ -17,7 +19,7 @@ string Delegator::handle_request(string phonenum, string msg) {
     Game *g = gb->getGame(phonenum);
     if(g) {
         if(g->isJudge(phonenum)) {
-            if(msg.find("player A") != string::npos) {
+            if(msg.find("player a") != string::npos) {
                 if(g->isAI("A")) {
                     string response = ai->askGPT(msg);
                     twilioClient->send_message(phonenum, response);
@@ -25,7 +27,7 @@ string Delegator::handle_request(string phonenum, string msg) {
                     string playernum = g->getPlayerPhonenum();
                     twilioClient->send_message(playernum, msg);
                 }
-            } else if(msg.find("player B") != string::npos) {
+            } else if(msg.find("player b") != string::npos) {
                 if(g->isAI("B")) {
                     string response = ai->askGPT(msg);
                     twilioClient->send_message(phonenum, response);
@@ -46,21 +48,25 @@ string Delegator::handle_request(string phonenum, string msg) {
             // already asked player/judge
             if(msg == "judge") {
                 if(p_num.size() > 0) {
+                    cout << "Starting game between " << p_num.front() << " and " << phonenum << endl;
                     Game *g = new Game(p_num.front(), phonenum);
                     p_num.pop();
                     gb->addGame(g);
                     return "Ask a question to player A or B";
                 } else {
                     j_num.push(phonenum);
+                    return "Ok, waiting for a player.";
                 }
             } else if (msg == "player") {
                 if(j_num.size() > 0) {
+                    cout << "Starting game between " << phonenum << " and " << j_num.front() << endl;
                     Game *g = new Game(phonenum, j_num.front());
                     j_num.pop();
                     gb->addGame(g);
                     return "Ask a question to player A or B";
                 } else {
                     p_num.push(phonenum);
+                    return "Ok, waiting for a judge.";
                 }
             }
         }

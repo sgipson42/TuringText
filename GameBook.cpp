@@ -3,6 +3,8 @@
 //
 
 #include "GameBook.h"
+#include <iostream>
+using namespace std;
 
 Game *GameBook::getGame(string phonenum) {
     if (games.find(phonenum) == games.end()) {

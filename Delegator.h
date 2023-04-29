@@ -25,5 +25,7 @@ public:
     string handle_request(string phonenum, string msg);
 };
 
+extern Delegator *delegator;
+
 #endif
 
