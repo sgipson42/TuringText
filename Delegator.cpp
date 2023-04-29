@@ -48,10 +48,12 @@ string Delegator::handle_request(string phonenum, string msg) {
             // already asked player/judge
             if(msg == "judge") {
                 if(p_num.size() > 0) {
-                    cout << "Starting game between " << p_num.front() << " and " << phonenum << endl;
-                    Game *g = new Game(p_num.front(), phonenum);
+                    string p_phonenum = p_num.front();
                     p_num.pop();
+                    cout << "Starting game between " << p_phonenum << " and " << phonenum << endl;
+                    Game *g = new Game(p_phonenum, phonenum);
                     gb->addGame(g);
+                    twilioClient->send_message(p_phonenum, "A judge has joined. You are now in a game.");
                     return "Ask a question to player A or B";
                 } else {
                     j_num.push(phonenum);
@@ -59,11 +61,13 @@ string Delegator::handle_request(string phonenum, string msg) {
                 }
             } else if (msg == "player") {
                 if(j_num.size() > 0) {
-                    cout << "Starting game between " << phonenum << " and " << j_num.front() << endl;
-                    Game *g = new Game(phonenum, j_num.front());
+                    string j_phonenum = j_num.front();
                     j_num.pop();
+                    cout << "Starting game between " << phonenum << " and " << j_phonenum << endl;
+                    Game *g = new Game(phonenum, j_phonenum);
                     gb->addGame(g);
-                    return "Ask a question to player A or B";
+                    twilioClient->send_message(j_phonenum, "A player has joined. You are now in a game. Ask a question of Player A or B.");
+                    return "Ok, a judge has been found. You are now in a game.";
                 } else {
                     p_num.push(phonenum);
                     return "Ok, waiting for a judge.";

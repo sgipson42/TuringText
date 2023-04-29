@@ -36,20 +36,22 @@ namespace net = boost::asio;            // from <boost/asio.hpp>
 using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
 
 map<string, string> parse_form_encoded(const string &encoded) {
-  map<string, string> params;
-  vector<string> key_value_pairs;
-  boost::split(key_value_pairs, encoded, boost::is_any_of("&"));
+    map<string, string> params;
+    vector<string> key_value_pairs;
+    boost::split(key_value_pairs, encoded, boost::is_any_of("&"));
 
-  for (const auto &key_value : key_value_pairs) {
-    vector<string> key_value_vec;
-    boost::split(key_value_vec, key_value, boost::is_any_of("="));
+    for (const auto &key_value : key_value_pairs) {
+        vector<string> key_value_vec;
+        boost::split(key_value_vec, key_value, boost::is_any_of("="));
 
-    if (key_value_vec.size() == 2) {
-      params[key_value_vec[0]] = key_value_vec[1];
+        if (key_value_vec.size() == 2) {
+            // replace '+' with ' '
+            boost::replace_all(key_value_vec[1], "+", " ");
+            params[key_value_vec[0]] = key_value_vec[1];
+        }
     }
-  }
 
-  return params;
+    return params;
 }
 
 class http_connection : public std::enable_shared_from_this<http_connection>
