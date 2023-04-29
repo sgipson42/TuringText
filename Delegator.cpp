@@ -25,8 +25,15 @@ string Delegator::handle_request(string phonenum, string msg) {
             if(msg_lower.find("player a") != string::npos) {
                 msg = msg.substr(msg_lower.find("player a") + 9);
                 if(g->isAI("A")) {
-                    string response = ai->askGPT(msg);
-                    twilioClient->send_message(phonenum, response);
+                    thread t([this, phonenum, msg, g]() {
+                        cout << "AI is thinking..." << endl;
+                        string response = ai->askGPT(msg);
+                        string letter = g->isAI("A") ? "A" : "B";
+                        response = "Player " + letter + ": " + response;
+                        this_thread::sleep_for(chrono::seconds(rand() % 10));
+                        twilioClient->send_message(phonenum, response);
+                    });
+                    t.detach();
                 } else {
                     string playernum = g->getPlayerPhonenum();
                     twilioClient->send_message(playernum, msg);
@@ -34,12 +41,16 @@ string Delegator::handle_request(string phonenum, string msg) {
             } else if(msg_lower.find("player b") != string::npos) {
                 msg = msg.substr(msg_lower.find("player b") + 9);
                 if(g->isAI("B")) {
-                    string response = ai->askGPT(msg);
-                    string letter = g->isAI("A") ? "A" : "B";
-                    response = "Player " + letter + ": " + response;
                     // wait random time before responding
-                    this_thread::sleep_for(chrono::seconds(rand() % 30));
-                    twilioClient->send_message(phonenum, response);
+                    thread t([this, phonenum, msg, g]() {
+                        cout << "AI is thinking..." << endl;
+                        string response = ai->askGPT(msg);
+                        string letter = g->isAI("A") ? "A" : "B";
+                        response = "Player " + letter + ": " + response;
+                        this_thread::sleep_for(chrono::seconds(rand() % 10));
+                        twilioClient->send_message(phonenum, response);
+                    });
+                    t.detach();
                 } else {
                     string playernum = g->getPlayerPhonenum();
                     twilioClient->send_message(playernum, msg);

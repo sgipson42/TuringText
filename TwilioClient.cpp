@@ -15,6 +15,10 @@ TwilioClient::TwilioClient(string account_sid, string auth_token, string from_nu
 }
 
 void TwilioClient::send_message(string to_number, string message) {
+    if(to_number.length() < 5) {
+        cout << "Debug TwilioClient sending to " << to_number << ": " << message << endl;
+        return;
+    }
     CURL *curl = curl_easy_init();
     if (curl)
     {
