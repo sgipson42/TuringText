@@ -25,6 +25,13 @@ string Delegator::handle_request(string phonenum, string msg) {
             if(msg_lower.find("player a") != string::npos) {
                 msg = msg.substr(msg_lower.find("player a") + 9);
                 if(g->isAI("A")) {
+                    if(phonenum.length() < 5) {
+                        // AI is texting us
+                        string response = ai->askGPT(msg);
+                        string letter = g->isAI("A") ? "A" : "B";
+                        response = "Player " + letter + ": " + response;
+                        return response;
+                    }
                     thread t([this, phonenum, msg, g]() {
                         cout << "AI is thinking..." << endl;
                         string response = ai->askGPT(msg);
@@ -41,6 +48,13 @@ string Delegator::handle_request(string phonenum, string msg) {
             } else if(msg_lower.find("player b") != string::npos) {
                 msg = msg.substr(msg_lower.find("player b") + 9);
                 if(g->isAI("B")) {
+                    if(phonenum.length() < 5) {
+                        // AI is texting us
+                        string response = ai->askGPT(msg);
+                        string letter = g->isAI("A") ? "A" : "B";
+                        response = "Player " + letter + ": " + response;
+                        return response;
+                    }
                     // wait random time before responding
                     thread t([this, phonenum, msg, g]() {
                         cout << "AI is thinking..." << endl;
